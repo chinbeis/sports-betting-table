@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +13,7 @@ import { addBet } from "@/app/actions";
 import { useRef, useState } from "react";
 import { DatePicker } from "./DatePicker";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function AddBetForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -27,55 +27,89 @@ export function AddBetForm() {
         if (date) {
           formData.set("date", date.toISOString());
         }
-        await addBet(formData);
-        formRef.current?.reset();
-        setDate(undefined);
-        router.push("/");
+        const result = await addBet(formData);
+        if (result.success) {
+          toast.success("Bet added successfully!");
+          formRef.current?.reset();
+          setDate(undefined);
+          router.push("/");
+        } else {
+          toast.error(result.error);
+        }
       }}
-      className="space-y-4"
+      className="space-y-4 w-full"
     >
-      <div>
-        <Label htmlFor="date">Date</Label>
-        <DatePicker date={date} onDateChange={setDate} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4">
+        <div className="space-y-2">
+          <Label htmlFor="date">Date</Label>
+          <DatePicker date={date} onDateChange={setDate} />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="match">Match</Label>
+          <Input id="match" name="match" required className="w-full" />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="map">Map</Label>
+          <Input id="map" name="map" required className="w-full" />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="bet_type">Bet Type</Label>
+          <Input id="bet_type" name="bet_type" required className="w-full" />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="odds">Odds</Label>
+          <Input
+            id="odds"
+            name="odds"
+            type="number"
+            step="0.01"
+            required
+            className="w-full"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="stake">Stake</Label>
+          <Input
+            id="stake"
+            name="stake"
+            type="number"
+            required
+            className="w-full"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="confidence">Confidence</Label>
+          <Select name="confidence" required>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select confidence" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="low">Low</SelectItem>
+              <SelectItem value="medium">Medium</SelectItem>
+              <SelectItem value="high">High</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="notes">Notes</Label>
+          <Input id="notes" name="notes" className="w-full" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="mood">Mood</Label>
+          <Input id="mood" name="mood" className="w-full" />
+        </div>
       </div>
-      <div>
-        <Label htmlFor="match">Match</Label>
-        <Input id="match" name="match" required />
-      </div>
-      <div>
-        <Label htmlFor="map">Map</Label>
-        <Input id="map" name="map" required />
-      </div>
-      <div>
-        <Label htmlFor="bet_type">Bet Type</Label>
-        <Input id="bet_type" name="bet_type" required />
-      </div>
-      <div>
-        <Label htmlFor="odds">Odds</Label>
-        <Input id="odds" name="odds" type="number" step="0.01" required />
-      </div>
-      <div>
-        <Label htmlFor="stake">Stake</Label>
-        <Input id="stake" name="stake" type="number" required />
-      </div>
-      <div>
-        <Label htmlFor="confidence">Confidence</Label>
-        <Select name="confidence" required>
-          <SelectTrigger>
-            <SelectValue placeholder="Select confidence" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="low">Low</SelectItem>
-            <SelectItem value="medium">Medium</SelectItem>
-            <SelectItem value="high">High</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <Label htmlFor="notes">Notes</Label>
-        <Input id="notes" name="notes" />
-      </div>
-      <Button type="submit">Add Bet</Button>
+
+      <Button type="submit" className="w-full sm:w-auto">
+        Add Bet
+      </Button>
     </form>
   );
 }
