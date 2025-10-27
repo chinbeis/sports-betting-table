@@ -12,6 +12,7 @@ export default async function EditBetPage({
   const bet = await prisma.bet.findUnique({
     where: { id },
   });
+  //push
 
   if (!bet) {
     return <div>Bet not found</div>;
