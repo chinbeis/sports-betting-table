@@ -20,7 +20,7 @@ export default async function DashboardPage() {
   const pending = bets.filter((bet) => bet.result === "pending").length;
   const winRate = totalBets > 0 ? ((wins / (wins + losses)) * 100).toFixed(2) : 0;
   const totalProfit = bets.reduce((acc, bet) => acc + bet.profit_loss, 0);
-  const startingBalance = 400000;
+  const startingBalance = 369750;
   const currentBalance = startingBalance + totalProfit;
 
   const balanceData = bets.reduce((acc, bet) => {
